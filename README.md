@@ -1,5 +1,5 @@
 # e621 discord bot
-A simple discord bot made in python for viewing e621 posts and pools
+A simple discord bot made in python for viewing e621 posts and pools<br>
 HUGE work in progress, but for now main features are working pretty well :D
 # Commands
 ./eevee - Command made using the gelbooru api to grab a random image of an eevee<br>
