@@ -12,7 +12,7 @@ HUGE work in progress, but for now main features are working pretty well :D
 
 
 ###### femboy command<br>
-![screenshot](https://cdn.discordapp.com/attachments/969259955620298822/970917761280798720/unknown.png)
+![screenshot](https://cdn.discordapp.com/attachments/969259955620298822/970919842536374292/unknown.png)
 
 
 ###### e621 / e621pool commands<br>
