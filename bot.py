@@ -339,4 +339,4 @@ async def femboy(ctx):
 
 
 
-client.run("OTU3NDAyMTYwNDc4NDI1MTA4.Yj-QPg.dQUUmB1MaMCwAbxsg2d_F3OPfOg")
+client.run("TOKEN")
