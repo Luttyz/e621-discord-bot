@@ -1,0 +1,4 @@
+discord.py==1.7.3
+praw==7.5.0
+pygelbooru==0.5.0
+requests==2.27.1
