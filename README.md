@@ -1,4 +1,4 @@
-[![downloads](https://img.shields.io/github/downloads/dox-net/e621-discord-bot/total](https://github.com/dox-net/e621-discord-bot/archive/refs/tags/work-in-progress.zip)
+[![downloads](https://img.shields.io/github/downloads/dox-net/e621-discord-bot/total)](https://github.com/dox-net/e621-discord-bot/archive/refs/tags/work-in-progress.zip)
 # e621 discord bot
 A simple discord bot made in python for viewing e621 posts and pools<br>
 HUGE work in progress, but for now main features are working pretty well :D
