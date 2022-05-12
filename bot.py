@@ -61,7 +61,7 @@ async def help(ctx):
     """)
 @client.command()
 async def eevee(ctx):
- gelbooru = Gelbooru('d4d8b6154fa5bdeaaa0c0767d06aa916e3d3adf2ce019b95e89532fced4d208b', '765509')
+ gelbooru = Gelbooru('GELBOORU API KEY', 'GELBOORU USER ID')
  results = await gelbooru.search_posts(tags=['eevee', 'sort:random'], exclude_tags=['rating:explicit', '1girl', '1boy', '2girls', '2boys', '3girls', '4girls', '3boys', '4boys', '5girls', '6+girls', '7+girls', '5boys', '6+boys', 'anime_coloring'])
  result = results[0]
  embed = discord.Embed(title="mmmm eeve", color=0x0)
