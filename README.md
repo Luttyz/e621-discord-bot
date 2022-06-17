@@ -1,6 +1,5 @@
 # e621 discord bot [![downloads](https://img.shields.io/github/downloads/dox-net/e621-discord-bot/total?color=green)](https://github.com/dox-net/e621-discord-bot/archive/refs/tags/work-in-progress.zip)
-A simple discord bot made in python for viewing e621 posts and pools<br>
-HUGE work in progress, but for now main features are working pretty well :D
+A simple discord bot made in python for viewing e621 posts and pools
 # Commands
 ./eevee - Command made using the gelbooru api to grab a random image of an eevee<br>
 ./femboy - Command made using the reddit api to grab a random image from r/femboy<br>
