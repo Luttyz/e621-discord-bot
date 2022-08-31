@@ -6,16 +6,15 @@ import asyncio
 
 # APIS
 
-from pygelbooru import Gelbooru
 import praw
 import py621
-
 
 
 ## "dude what the fuck is wrong with you, why dont you use cogs?"
 ## FUCK COGS
 
-client=commands.Bot(command_prefix="./", help_command=None)
+intents=discord.Intents.all()
+client=commands.Bot(command_prefix="./", help_command=None, intents=intents)
 
 e621api = py621.public.apiGet(py621.types.e621)
 ## using api key isn't required
@@ -25,11 +24,9 @@ e926api = py621.public.apiGet(py621.types.e926)
 async def status_task():
     while True:
         await client.change_presence(activity=discord.Game(name="owo"))
-        await asyncio.sleep(1000)
+        await asyncio.sleep(15)
         await client.change_presence(activity=discord.Game(name="uwu"))
-        await asyncio.sleep(1000)
-        await client.change_presence(activity=discord.Game(name="i love you so much alexei <3"))
-        await asyncio.sleep(50)
+        await asyncio.sleep(15)
 
 
 ###### CLIENT EVENTS ##################################### CLIENT EVENTS #################################
@@ -40,39 +37,27 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    if message.author == client.user:
+        return
+    if message.mention_everyone:
+        return
     if client.user.mentioned_in(message):
      await message.channel.send("""
-     ``Command prefix is ./ (CRAZY LINUX REFERNCE!!)``
-     ``eevee - random image of an eevee``
+     ``Command prefix is ./``
      ``e621/e926 - search images on e621.net``
      ``femboy - random image of a femboy from r/femboy``
      """)
     await client.process_commands(message)
 
-########## CLIENT COMMANDS ####################################### CLIENT COMMANDS ########################3
+########## CLIENT COMMANDS ####################################### CLIENT COMMANDS ########################
 
 @client.command()
 async def help(ctx):
     await ctx.send("""
-    ``Command prefix is ./ (CRAZY LINUX REFERNCE!!)``
-    ``eevee - random image of an eevee``
+    ``Command prefix is ./``
     ``e621/e926 - search images on e621.net``
     ``femboy - random image of a femboy from r/femboy``
     """)
-@client.command()
-async def eevee(ctx):
- gelbooru = Gelbooru('GELBOORU API KEY', 'GELBOORU USER ID')
- results = await gelbooru.search_posts(tags=['eevee', 'sort:random'], exclude_tags=['rating:explicit', '1girl', '1boy', '2girls', '2boys', '3girls', '4girls', '3boys', '4boys', '5girls', '6+girls', '7+girls', '5boys', '6+boys', 'anime_coloring'])
- result = results[0]
- embed = discord.Embed(title="mmmm eeve", color=0x0)
- embed.set_image(url=result.file_url)
- embed.set_footer(text=f'https://smug.ga - post ID: {result.id}')
- await ctx.send(embed=embed)
-
-@client.command()
-async def damndaniel(ctx):
-    await ctx.send("stop")
-
 
 @client.command(aliases=['e9pool'])
 @commands.max_concurrency(number=1, per=commands.BucketType.user, wait=False)
@@ -101,6 +86,7 @@ async def e926pool(ctx, *, key):
    if str(reaction.emoji) == "🚫":
     killed = discord.Embed(title="Dead thread.", description=f'{ctx.message.author.mention} manually killed their thread', color=0x0)
     await react.edit(embed = killed)
+    await react.remove_reaction("🚫", user)
     return
    if str(reaction.emoji) == "▶":
     PostSelect+=1
@@ -110,6 +96,7 @@ async def e926pool(ctx, *, key):
     newEmbed.set_image(url=Post.file.url)
     newEmbed.set_footer(text=f'In Pool: {pool_id_try} - post ID: {Post.id}')
     await react.edit(embed = newEmbed)
+    await react.remove_reaction("▶", user)
    if str(reaction.emoji) == "◀":
     PostSelect-=1
     Post = Posts[PostSelect]
@@ -118,8 +105,11 @@ async def e926pool(ctx, *, key):
     newEmbed.set_image(url=Post.file.url)
     newEmbed.set_footer(text=f'In Pool: {pool_id_try} - post ID: {Post.id}')
     await react.edit(embed = newEmbed)
+    await react.remove_reaction("◀", user)
   except IndexError:
+   await ctx.send("reached the end of e621 page", delete_after=6)
    print(f'wrapping around on {ctx.message.author.name}s thread')
+   await react.remove_reaction("▶", user)
   except asyncio.TimeoutError:
    timeout = discord.Embed(title="Dead thread.", description=f'{ctx.message.author.mention} stopped interacting with their thread', color=0x0)
    await react.edit(embed = timeout)
@@ -130,12 +120,18 @@ async def e926pool(ctx, *, key):
 @commands.max_concurrency(number=1, per=commands.BucketType.user, wait=False)
 async def e926(ctx, *, key):
  tags = []
+ if "+webm" in key:
+    dwd = str("-young -scat")
+    key = key.replace('+webm', '')
+ else:
+    dwd = str("-young -scat -webm")
+ e9page = 1
  dwd = str()
  ele = str(key)
  vlv = int(0)
  tags.append(dwd)
  tags.append(ele)
- Posts = e926api.getPosts(tags, 10, 1, False)
+ Posts = e926api.getPosts(tags, 60, e9page, False)
  Post = Posts[vlv]
  post_orgin = str(Post.id)
  embed = discord.Embed(title="Post Link",url='https://e621.net/posts/' + post_orgin, color=0x0)
@@ -159,12 +155,14 @@ async def e926(ctx, *, key):
    if str(reaction.emoji) == "🚫":
     killed = discord.Embed(title="Dead thread.", description=f'{ctx.message.author.mention} manually killed their thread', color=0x0)
     await react.edit(embed = killed)
+    await react.remove_reaction("🚫", user)
     return
    if str(reaction.emoji) == "▶":
     vlv+=1
     Post = Posts[vlv]
     post_orgin = str(Post.id)
     newEmbed = discord.Embed(title="Post Link",url='https://e621.net/posts/' + post_orgin, color=0x0)
+    await react.remove_reaction("▶", user)
     try:
      newEmbed.set_image(url=Post.file.url)
     except Exception:
@@ -182,6 +180,7 @@ async def e926(ctx, *, key):
     post_orgin = str(Post.id)
     newEmbed = discord.Embed(title="Post Link",url='https://e621.net/posts/' + post_orgin, color=0x0)
     newEmbed.set_image(url=Post.file.url)
+    await react.remove_reaction("◀", user)
     try:
      pool_id_try = Post.pools[0]
     except IndexError:
@@ -190,17 +189,26 @@ async def e926(ctx, *, key):
     await react.edit(embed = newEmbed)
   except IndexError:
    print(f'wrapping around on {ctx.message.author.name}s thread')
+   await react.remove_reaction("▶", user)
+   await ctx.send("reached the end of e621 posts, attempting to use next page", delete_after=6)
+   vlv = int(0)
+   e9page = e9page+1
+   Posts = e926api.getPosts(tags, 60, e9page, False)
+   Post = Posts[vlv]
+   post_orgin = str(Post.id)
+   newEmbed.set_image(url=Post.file.url)
+   newEmbed.set_footer(text=f'In Pool: {pool_id_try} - post ID: {Post.id}')
+   await react.edit(embed = newEmbed)
+   return
   except asyncio.TimeoutError:
    timeout = discord.Embed(title="Dead thread.", description=f'{ctx.message.author.mention} stopped interacting with their thread', color=0x0)
    await react.edit(embed = timeout)
    return
 
+
 @client.command(aliases=['e6pool'])
 @commands.max_concurrency(number=1, per=commands.BucketType.user, wait=False)
 async def e621pool(ctx, *, key):
- if not ctx.channel.is_nsfw():
-  await ctx.send("Only use this command in an nsfw channel", delete_after=2)
-  return
  pool_id = (key)
  PostSelect = int(0)
  await ctx.send("fetching posts, this could take awhile...", delete_after=3.5)
@@ -225,6 +233,7 @@ async def e621pool(ctx, *, key):
    if str(reaction.emoji) == "🚫":
     killed = discord.Embed(title="Dead thread.", description=f'{ctx.message.author.mention} manually killed their thread', color=0x0)
     await react.edit(embed = killed)
+    await react.remove_reaction("🚫", user)
     return
    if str(reaction.emoji) == "▶":
     PostSelect+=1
@@ -234,6 +243,7 @@ async def e621pool(ctx, *, key):
     newEmbed.set_image(url=Post.file.url)
     newEmbed.set_footer(text=f'In Pool: {pool_id_try} - post ID: {Post.id}')
     await react.edit(embed = newEmbed)
+    await react.remove_reaction("▶", user)
    if str(reaction.emoji) == "◀":
     PostSelect-=1
     Post = Posts[PostSelect]
@@ -242,8 +252,11 @@ async def e621pool(ctx, *, key):
     newEmbed.set_image(url=Post.file.url)
     newEmbed.set_footer(text=f'In Pool: {pool_id_try} - post ID: {Post.id}')
     await react.edit(embed = newEmbed)
+    await react.remove_reaction("◀", user)
   except IndexError:
    print(f'wrapping around on {ctx.message.author.name}s thread')
+   await react.remove_reaction("▶", user)
+   await ctx.send("reached the end of e621 posts", delete_after=6)
   except asyncio.TimeoutError:
    timeout = discord.Embed(title="Dead thread.", description=f'{ctx.message.author.mention} stopped interacting with their thread', color=0x0)
    await react.edit(embed = timeout)
@@ -252,16 +265,18 @@ async def e621pool(ctx, *, key):
 @client.command(aliases=['e6'])
 @commands.max_concurrency(number=1, per=commands.BucketType.user, wait=False)
 async def e621(ctx, *, key):
- if not ctx.channel.is_nsfw():
-  await ctx.send("Only use this command in an nsfw channel", delete_after=2)
-  return
  tags = []
- dwd = str("-young")
+ if "+webm" in key:
+    dwd = str("-young -scat")
+    key = key.replace('+webm', '')
+ else:
+    dwd = str("-young -scat -webm")
  ele = str(key)
  vlv = int(0)
+ e6page = 1
  tags.append(dwd)
  tags.append(ele)
- Posts = e621api.getPosts(tags, 10, 1, False)
+ Posts = e621api.getPosts(tags, 60, e6page, False)
  Post = Posts[vlv]
  post_orgin = str(Post.id)
  embed = discord.Embed(title="Post Link",url='https://e621.net/posts/' + post_orgin, color=0x0)
@@ -285,6 +300,7 @@ async def e621(ctx, *, key):
    if str(reaction.emoji) == "🚫":
     killed = discord.Embed(title="Dead thread.", description=f'{ctx.message.author.mention} manually killed their thread', color=0x0)
     await react.edit(embed = killed)
+    await react.remove_reaction("🚫", user)
     return
    if str(reaction.emoji) == "▶":
     vlv+=1
@@ -302,6 +318,7 @@ async def e621(ctx, *, key):
      pool_id_try = ("(None)")
     newEmbed.set_footer(text=f'In Pool: {pool_id_try} - post ID: {Post.id}')
     await react.edit(embed = newEmbed)
+    await react.remove_reaction("▶", user)
    if str(reaction.emoji) == "◀":
     vlv-=1
     Post = Posts[vlv]
@@ -314,8 +331,17 @@ async def e621(ctx, *, key):
      pool_id_try = ("(None)")
     newEmbed.set_footer(text=f'In Pool: {pool_id_try} - post ID: {Post.id}')
     await react.edit(embed = newEmbed)
+    await react.remove_reaction("◀", user)
   except IndexError:
-   print(f'wrapping around on {ctx.message.author.name}s thread')
+   await ctx.send("reached the end of e621 posts, attempting to use next page", delete_after=6)
+   vlv = int(0)
+   e6page = e6page+1
+   Posts = e621api.getPosts(tags, 60, e6page, False)
+   Post = Posts[vlv]
+   post_orgin = str(Post.id)
+   newEmbed.set_image(url=Post.file.url)
+   newEmbed.set_footer(text=f'In Pool: {pool_id_try} - post ID: {Post.id}')
+   await react.edit(embed = newEmbed)
   except asyncio.TimeoutError:
    timeout = discord.Embed(title="Dead thread.", description=f'{ctx.message.author.mention} stopped interacting with their thread', color=0x0)
    await react.edit(embed = timeout)
@@ -331,7 +357,6 @@ async def femboy(ctx):
   submission = next(x for x in femboys if not x.stickied)
  embed = discord.Embed(title="Post Link",url='https://reddit.com' + submission.permalink, color=0x0)
  embed.set_image(url=submission.url)
- embed.set_footer(text="https://smug.ga")
  await ctx.send(embed=embed)
 
 
@@ -339,4 +364,4 @@ async def femboy(ctx):
 
 
 
-client.run("TOKEN")
+client.run("setyourbottokenhereplease")
