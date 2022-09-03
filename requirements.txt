@@ -1,3 +1,4 @@
 discord.py==1.7.3
 praw==7.5.0
 requests==2.27.1
+py621==0.0.2
