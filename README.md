@@ -12,6 +12,8 @@ Note: because discord.py doesn't support embedding videos, WebM posts are disabl
 https://user-images.githubusercontent.com/109423445/187699711-5daa73b9-e33a-4f90-8ba0-fd29afa0329e.mp4
 
 # Running
-Running the bot is as simple as adding your bot's token at the end of the bot.py file and doing `python3 bot.py`, although only Python 3.9 and higher seems to be supported.
+Depending on if you have already ran a Discord bot before, you might want to install <a href="https://github.com/Luttyz/e621-discord-bot/blob/main/requirements.txt">the dependencies</a> by doing `pip install requirements.txt`.<br>
+
+Running the bot is as simple as adding your bot's token at the end of the bot.py file and doing `python3 bot.py`, although only Python 3.9 and higher seems to be supported.<br>
 
 You can invite this bot to your server <a href="https://discord.com/oauth2/authorize/?permissions=387136&scope=bot&client_id=989510170839236628">here</a>. Do note that it will not check for if the channel is NSFW or not, this feature has been removed due to the main use case of this instance. The bot also currently requests Discord for all special intents whereas it only needs to read message, this might be fixed later if I get around to it.
