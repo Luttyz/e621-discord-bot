@@ -13,7 +13,9 @@ import py621
 ## "dude what the fuck is wrong with you, why dont you use cogs?"
 ## FUCK COGS
 
-intents=discord.Intents.all()
+intents = discord.Intents.default()
+intents.message_content = True
+
 client=commands.Bot(command_prefix="./", help_command=None, intents=intents)
 
 e621api = py621.public.apiGet(py621.types.e621)
