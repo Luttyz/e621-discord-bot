@@ -89,6 +89,7 @@ async def e926pool(ctx, *, key):
    if str(reaction.emoji) == "🚫":
     killed = discord.Embed(title="Dead thread.", description=f'{ctx.message.author.mention} manually killed their thread', color=0x0)
     await react.edit(embed = killed)
+    await react.remove_reaction("🚫", user)
     return
    if str(reaction.emoji) == "▶":
     PostSelect+=1
@@ -98,6 +99,7 @@ async def e926pool(ctx, *, key):
     newEmbed.set_image(url=Post.file.url)
     newEmbed.set_footer(text=f'In Pool: {pool_id_try} - post ID: {Post.id}')
     await react.edit(embed = newEmbed)
+    await react.remove_reaction("▶", user)
    if str(reaction.emoji) == "◀":
     PostSelect-=1
     Post = Posts[PostSelect]
@@ -106,24 +108,33 @@ async def e926pool(ctx, *, key):
     newEmbed.set_image(url=Post.file.url)
     newEmbed.set_footer(text=f'In Pool: {pool_id_try} - post ID: {Post.id}')
     await react.edit(embed = newEmbed)
+    await react.remove_reaction("◀", user)
   except IndexError:
-   await ctx.send("reached the end of e621 page", delete_after=3.5)
+   await ctx.send("reached the end of e621 page", delete_after=6)
    print(f'wrapping around on {ctx.message.author.name}s thread')
+   await react.remove_reaction("▶", user)
   except asyncio.TimeoutError:
    timeout = discord.Embed(title="Dead thread.", description=f'{ctx.message.author.mention} stopped interacting with their thread', color=0x0)
    await react.edit(embed = timeout)
    return
 
+
 @client.command(aliases=['e9'])
 @commands.max_concurrency(number=1, per=commands.BucketType.user, wait=False)
 async def e926(ctx, *, key):
  tags = []
+ if "+webm" in key:
+    dwd = str("-young -scat")
+    key = key.replace('+webm', '')
+ else:
+    dwd = str("-young -scat -webm")
+ e9page = 1
  dwd = str()
  ele = str(key)
  vlv = int(0)
  tags.append(dwd)
  tags.append(ele)
- Posts = e926api.getPosts(tags, 10, 1, False)
+ Posts = e926api.getPosts(tags, 60, e9page, False)
  Post = Posts[vlv]
  post_orgin = str(Post.id)
  embed = discord.Embed(title="Post Link",url='https://e621.net/posts/' + post_orgin, color=0x0)
@@ -147,12 +158,14 @@ async def e926(ctx, *, key):
    if str(reaction.emoji) == "🚫":
     killed = discord.Embed(title="Dead thread.", description=f'{ctx.message.author.mention} manually killed their thread', color=0x0)
     await react.edit(embed = killed)
+    await react.remove_reaction("🚫", user)
     return
    if str(reaction.emoji) == "▶":
     vlv+=1
     Post = Posts[vlv]
     post_orgin = str(Post.id)
     newEmbed = discord.Embed(title="Post Link",url='https://e621.net/posts/' + post_orgin, color=0x0)
+    await react.remove_reaction("▶", user)
     try:
      newEmbed.set_image(url=Post.file.url)
     except Exception:
@@ -170,6 +183,7 @@ async def e926(ctx, *, key):
     post_orgin = str(Post.id)
     newEmbed = discord.Embed(title="Post Link",url='https://e621.net/posts/' + post_orgin, color=0x0)
     newEmbed.set_image(url=Post.file.url)
+    await react.remove_reaction("◀", user)
     try:
      pool_id_try = Post.pools[0]
     except IndexError:
@@ -178,10 +192,22 @@ async def e926(ctx, *, key):
     await react.edit(embed = newEmbed)
   except IndexError:
    print(f'wrapping around on {ctx.message.author.name}s thread')
+   await react.remove_reaction("▶", user)
+   await ctx.send("reached the end of e621 posts, attempting to use next page", delete_after=6)
+   vlv = int(0)
+   e9page = e9page+1
+   Posts = e926api.getPosts(tags, 60, e9page, False)
+   Post = Posts[vlv]
+   post_orgin = str(Post.id)
+   newEmbed.set_image(url=Post.file.url)
+   newEmbed.set_footer(text=f'In Pool: {pool_id_try} - post ID: {Post.id}')
+   await react.edit(embed = newEmbed)
+   return
   except asyncio.TimeoutError:
    timeout = discord.Embed(title="Dead thread.", description=f'{ctx.message.author.mention} stopped interacting with their thread', color=0x0)
    await react.edit(embed = timeout)
    return
+
 
 @client.command(aliases=['e6pool'])
 @commands.max_concurrency(number=1, per=commands.BucketType.user, wait=False)
@@ -210,6 +236,7 @@ async def e621pool(ctx, *, key):
    if str(reaction.emoji) == "🚫":
     killed = discord.Embed(title="Dead thread.", description=f'{ctx.message.author.mention} manually killed their thread', color=0x0)
     await react.edit(embed = killed)
+    await react.remove_reaction("🚫", user)
     return
    if str(reaction.emoji) == "▶":
     PostSelect+=1
@@ -219,6 +246,7 @@ async def e621pool(ctx, *, key):
     newEmbed.set_image(url=Post.file.url)
     newEmbed.set_footer(text=f'In Pool: {pool_id_try} - post ID: {Post.id}')
     await react.edit(embed = newEmbed)
+    await react.remove_reaction("▶", user)
    if str(reaction.emoji) == "◀":
     PostSelect-=1
     Post = Posts[PostSelect]
@@ -227,8 +255,11 @@ async def e621pool(ctx, *, key):
     newEmbed.set_image(url=Post.file.url)
     newEmbed.set_footer(text=f'In Pool: {pool_id_try} - post ID: {Post.id}')
     await react.edit(embed = newEmbed)
+    await react.remove_reaction("◀", user)
   except IndexError:
    print(f'wrapping around on {ctx.message.author.name}s thread')
+   await react.remove_reaction("▶", user)
+   await ctx.send("reached the end of e621 posts", delete_after=6)
   except asyncio.TimeoutError:
    timeout = discord.Embed(title="Dead thread.", description=f'{ctx.message.author.mention} stopped interacting with their thread', color=0x0)
    await react.edit(embed = timeout)
@@ -245,9 +276,10 @@ async def e621(ctx, *, key):
     dwd = str("-young -scat -webm")
  ele = str(key)
  vlv = int(0)
+ e6page = 1
  tags.append(dwd)
  tags.append(ele)
- Posts = e621api.getPosts(tags, 60, 1, False)
+ Posts = e621api.getPosts(tags, 60, e6page, False)
  Post = Posts[vlv]
  post_orgin = str(Post.id)
  embed = discord.Embed(title="Post Link",url='https://e621.net/posts/' + post_orgin, color=0x0)
@@ -304,9 +336,15 @@ async def e621(ctx, *, key):
     await react.edit(embed = newEmbed)
     await react.remove_reaction("◀", user)
   except IndexError:
-   print(f'wrapping around on {ctx.message.author.name}s thread')
-   await react.remove_reaction("▶", user)
-   await ctx.send("reached the end of e621 posts", delete_after=3.5)
+   await ctx.send("reached the end of e621 posts, attempting to use next page", delete_after=6)
+   vlv = int(0)
+   e6page = e6page+1
+   Posts = e621api.getPosts(tags, 60, e6page, False)
+   Post = Posts[vlv]
+   post_orgin = str(Post.id)
+   newEmbed.set_image(url=Post.file.url)
+   newEmbed.set_footer(text=f'In Pool: {pool_id_try} - post ID: {Post.id}')
+   await react.edit(embed = newEmbed)
   except asyncio.TimeoutError:
    timeout = discord.Embed(title="Dead thread.", description=f'{ctx.message.author.mention} stopped interacting with their thread', color=0x0)
    await react.edit(embed = timeout)
