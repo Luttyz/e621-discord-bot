@@ -366,7 +366,7 @@ async def femboy(ctx):
 
 @client.slash_command(name="e621bothelp")
 async def help(ctx):
-    await ctx.send("""
+    await ctx.respond("""
     ``Command prefix is ./``
     ``e621/e926 - search images on e621.net``
     ``femboy - random image of a femboy from r/femboy``
@@ -447,7 +447,7 @@ async def e926(ctx, *, key):
  except IndexError:
   pool_id_try = ("(None)")
  embed.set_footer(text=f'In Pool: {pool_id_try} - post ID: {Post.id}')
- react = await ctx.send(embed=embed)
+ react = await ctx.respond(embed=embed)
  await react.add_reaction('◀')
  await react.add_reaction('▶')
  await react.add_reaction('🚫')
@@ -498,7 +498,7 @@ async def e926(ctx, *, key):
 async def e621pool(ctx, *, key):
  pool_id = (key)
  PostSelect = int(0)
- await ctx.send("fetching posts, this could take awhile...", delete_after=3.5)
+ await ctx.respond("fetching posts, this could take awhile...", delete_after=3.5)
  pool = e621api.getPool(pool_id)
  Posts = pool.getPosts()
  Post = Posts[PostSelect]
@@ -546,7 +546,7 @@ async def e621pool(ctx, *, key):
 
 @client.slash_command(name="e621")
 @commands.max_concurrency(number=1, per=commands.BucketType.user, wait=False)
-async def e621(ctx, *, key, ctx.author):
+async def e621(ctx, *, key):
  tags = []
  if "+webm" in key:
     dwd = str("-young -scat")
@@ -571,7 +571,7 @@ async def e621(ctx, *, key, ctx.author):
  except IndexError:
   pool_id_try = ("(None)")
  embed.set_footer(text=f'In Pool: {pool_id_try} - post ID: {Post.id}')
- react = await ctx.send(embed=embed)
+ react = await ctx.respond(embed=embed)
  await react.add_reaction('◀')
  await react.add_reaction('▶')
  await react.add_reaction('🚫')
@@ -632,6 +632,6 @@ async def femboy(ctx):
   submission = next(x for x in femboys if not x.stickied)
  embed = discord.Embed(title="Post Link",url='https://reddit.com' + submission.permalink, color=0x0)
  embed.set_image(url=submission.url)
- await ctx.send(embed=embed)
+ await ctx.respond(embed=embed)
 
-client.run("setyourbottokenhereplease")
+client.run("discordkeyhere")
