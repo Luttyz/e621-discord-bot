@@ -17,3 +17,7 @@ Depending on if you have already ran a Discord bot before, you might want to ins
 Running the bot is as simple as adding your bot's token at the end of the bot.py file and doing `python3 bot.py`, although only Python 3.9 and higher seems to be supported.<br>
 
 You can invite this bot to your server <a href="https://discord.com/oauth2/authorize/?permissions=387136&scope=bot&client_id=989510170839236628">here</a>. Do note that it will not check for if the channel is NSFW or not, this feature has been removed due to the main use case of this instance. The bot also currently requests Discord for all special intents whereas it only needs to read message, this might be fixed later if I get around to it.
+
+## TO-DO 📌 :
+- [ ] Handle missing permissions more gracefully (the bot breaks whenever the `Manage Messages` permission is missing)
+- [ ] Add support for slash commands//new buttons
