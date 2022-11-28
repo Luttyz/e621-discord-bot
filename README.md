@@ -21,3 +21,5 @@ You can invite this bot to your server <a href="https://discord.com/oauth2/autho
 ## TO-DO 📌 :
 - [ ] Handle missing permissions more gracefully (the bot breaks whenever the `Manage Messages` permission is missing)
 - [ ] Add support for slash commands//new buttons
+- [ ] Add a ./invite command, maybe
+- [ ] Add support for post ID
